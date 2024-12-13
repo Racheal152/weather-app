@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .forecast-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .forecast {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather Forecast</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="city">Enter City: </label>
+        <input type="text" name="city" id="city" required>
+        <button type="submit">Get Weather</button>
+    </form>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    {% if weather_data %}
+        <h2>Current Weather</h2>
+        <div class="current-weather">
+            <p><strong>City:</strong> {{ weather_data.name }}</p>
+            <p><strong>Temperature:</strong> {{ weather_data.temperature }}°C</p>
+            <p><strong>Weather:</strong> {{ weather_data.description }}</p>
+            <img src="http://openweathermap.org/img/w/{{ weather_data.icon }}.png" alt="{{ weather_data.description }}">
+        </div>
+    {% endif %}
+
+    {% if daily_forecasts %}
+        <h2>5-Day Forecast</h2>
+        <div class="forecast-container">
+            {% for forecast in daily_forecasts %}
+                <div class="forecast">
+                    <h3>{{ forecast.day }}</h3>
+                    <p>{{ forecast.min_temp }}°C - {{ forecast.max_temp }}°C</p>
+                    <p>{{ forecast.description }}</p>
+                    <img src="http://openweathermap.org/img/w/{{ forecast.icon }}.png" alt="{{ forecast.description }}">
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</body>
+</html>
